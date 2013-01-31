@@ -12,10 +12,8 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.Background;
-import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.extension.debugdraw.DebugRenderer;
-import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
@@ -36,6 +34,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.noobgrammer.rulethemall.critters.Critter;
+import com.noobgrammer.rulethemall.towers.Tower;
 
 /**
  * (c) 2010 Nicolas Gramlich
@@ -57,9 +56,9 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 	
-	private int numFaces = 0;
 	
-	private Body body_;
+	
+	
 	private Critter face_;
 
 	// ===========================================================
@@ -92,8 +91,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 
 	@Override
 	public EngineOptions onCreateEngineOptions() {
-		Toast.makeText(this, "Touch the screen to add objects.", Toast.LENGTH_LONG).show();
-
+		
 		final Camera camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		return new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new FillResolutionPolicy(), camera);
@@ -139,6 +137,9 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		this.mScene.attachChild(roof);
 		this.mScene.attachChild(left);
 		this.mScene.attachChild(right);
+		
+
+		this.addFace(0, 0);
 
 		this.mScene.registerUpdateHandler(this.mPhysicsWorld);
 		this.mScene.registerUpdateHandler(new IUpdateHandler()
@@ -147,8 +148,8 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			@Override
 			public void onUpdate(float pSecondsElapsed)
 			{
-				if(body_ != null && face_ != null)
-					body_.setTransform(face_.getX()/32, face_.getY()/32, 0);
+//				if(body_ != null && face_ != null)
+//					body_.setTransform(face_.getX()/32, face_.getY()/32, 0);
 //					body_.setTransform(face_.getX()/32 + face_.getWidth()/2, face_.getY()/32 + face_.getHeight()/2, 0);
 			}
 
@@ -169,10 +170,8 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	public boolean onSceneTouchEvent(final Scene pScene, final TouchEvent pSceneTouchEvent) {
 		if(this.mPhysicsWorld != null) {
 			if(pSceneTouchEvent.isActionDown()) {
-				if(numFaces < 1)
 				{
-					this.addFace(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
-					numFaces++;
+					this.addTower(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 				}
 				return true;
 			}
@@ -200,8 +199,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		this.mFaceCount++;
 		Debug.d("Faces: " + this.mFaceCount);
 		
-		face_ = new Critter(pX, pY, this.mBoxFaceTextureRegion, this.getVertexBufferObjectManager());
-		body_ = PhysicsFactory.createBoxBody(this.mPhysicsWorld, face_, BodyType.DynamicBody, FIXTURE_DEF);
+		face_ = new Critter(pX, pY, this.mBoxFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF);
 		
 		final Path path = new Path(5).to(10, 10).to(10, CAMERA_HEIGHT - 74).to(CAMERA_WIDTH - 58, CAMERA_HEIGHT - 74).to(CAMERA_WIDTH - 58, 10).to(10, 10);
 
@@ -209,7 +207,12 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
         face_.registerEntityModifier(new LoopEntityModifier(new PathModifier(30, path, EaseLinear.getInstance())));
         
 		this.mScene.attachChild(face_);
-		this.mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(face_, body_, true, true));
+	}
+	
+	private void addTower(final float pX, final float pY)
+	{
+		Tower tower = new Tower(pX, pY, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF);
+		this.mScene.attachChild(tower);
 	}
 
 	// ===========================================================

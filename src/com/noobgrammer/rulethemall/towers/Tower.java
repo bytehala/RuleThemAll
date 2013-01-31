@@ -1,4 +1,4 @@
-package com.noobgrammer.rulethemall.critters;
+package com.noobgrammer.rulethemall.towers;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
@@ -8,16 +8,16 @@ import org.andengine.extension.physics.box2d.util.constants.PhysicsConstants;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-public class Critter extends AnimatedSprite
+public class Tower extends AnimatedSprite
 {
 	private PhysicsWorld mPhysicsWorld;
 	private Body mBody;
 
-	public Critter(float pX,
+	public Tower(float pX,
 			float pY,
 			ITiledTextureRegion pTiledTextureRegion,
 			VertexBufferObjectManager pVertexBufferObjectManager,
@@ -28,21 +28,11 @@ public class Critter extends AnimatedSprite
 		super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
 		animate(200);
 		mPhysicsWorld = physicsWorld;
-		mBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, this, BodyType.KinematicBody, fixtureDef);
+		mBody = PhysicsFactory.createCircleBody(this.mPhysicsWorld, pX, pY, 150, BodyType.StaticBody, fixtureDef, PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
+//		PhysicsFactory.createCircleBody(this.mPhysicsWorld, this, BodyType.StaticBody, fixtureDef, PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(this, mBody, true, true));
 		// TODO Auto-generated constructor stub
 	}
 	
-	@Override
-	public void setPosition(float x, float y)
-	{
-		super.setPosition(x, y);
-		mBody.setTransform((x + getWidth()/2)/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, (y + getHeight()/2)/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, getRotation());
-	}
-	
-	public void update()
-	{
-		
-	}
 
 }
