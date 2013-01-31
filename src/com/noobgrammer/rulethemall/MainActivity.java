@@ -27,12 +27,16 @@ import org.andengine.util.debug.Debug;
 import org.andengine.util.modifier.ease.EaseLinear;
 
 import android.hardware.SensorManager;
-import android.widget.Toast;
+import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.noobgrammer.rulethemall.critters.Critter;
 import com.noobgrammer.rulethemall.towers.Tower;
 
@@ -55,6 +59,9 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private static final int CAMERA_HEIGHT = 480;
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
+	private static final FixtureDef FIXTURE_DEF_TOWER = PhysicsFactory.createFixtureDef(1, 0f, 0f, true, (short)2, (short)1, (short)4);
+	private static final FixtureDef FIXTURE_DEF_CRITTER = PhysicsFactory.createFixtureDef(1, 0f, 0f, true, (short)1, (short)2, (short)4);
+	
 	
 	
 	
@@ -118,6 +125,41 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		this.mScene.setOnSceneTouchListener(this);
 
 		this.mPhysicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_DEATH_STAR_I), false);
+		this.mPhysicsWorld.setContactListener(new ContactListener() {
+            @Override
+			public void beginContact(Contact contact)
+			{
+				// TODO Auto-generated method stub
+            	Fixture f1 = contact.getFixtureA();
+            	Fixture f2 = contact.getFixtureB();
+            	if(f1!= null && f2!=null) // NULL POINTER EXCEPTION
+            	if(f1.getUserData().equals("tower") && f2.getUserData().equals("critter"))
+            	{
+            		
+            	}
+				
+			}
+
+			@Override
+			public void endContact(Contact contact)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold)
+			{
+				Log.d("LEM!", "" + contact.getFixtureA().getUserData() + " " + contact.getFixtureB().getUserData());
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse)
+			{
+				// TODO Auto-generated method stub
+				
+			}
+    });
 
 		final VertexBufferObjectManager vertexBufferObjectManager = this.getVertexBufferObjectManager();
 		final Rectangle ground = new Rectangle(0, CAMERA_HEIGHT - 2, CAMERA_WIDTH, 2, vertexBufferObjectManager);
@@ -199,7 +241,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		this.mFaceCount++;
 		Debug.d("Faces: " + this.mFaceCount);
 		
-		face_ = new Critter(pX, pY, this.mBoxFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF);
+		face_ = new Critter(pX, pY, this.mBoxFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_CRITTER);
 		
 		final Path path = new Path(5).to(10, 10).to(10, CAMERA_HEIGHT - 74).to(CAMERA_WIDTH - 58, CAMERA_HEIGHT - 74).to(CAMERA_WIDTH - 58, 10).to(10, 10);
 
@@ -211,7 +253,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	
 	private void addTower(final float pX, final float pY)
 	{
-		Tower tower = new Tower(pX, pY, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF);
+		Tower tower = new Tower(pX, pY, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_TOWER);
 		this.mScene.attachChild(tower);
 	}
 

@@ -26,11 +26,12 @@ public class Critter extends AnimatedSprite
 			)
 	{
 		super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
-		animate(200);
+//		animate(200);
 		mPhysicsWorld = physicsWorld;
 		mBody = PhysicsFactory.createBoxBody(this.mPhysicsWorld, this, BodyType.KinematicBody, fixtureDef);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(this, mBody, true, true));
-		// TODO Auto-generated constructor stub
+		mBody.setUserData("critter");
+
 	}
 	
 	@Override

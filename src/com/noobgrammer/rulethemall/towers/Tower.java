@@ -28,10 +28,11 @@ public class Tower extends AnimatedSprite
 		super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
 		animate(200);
 		mPhysicsWorld = physicsWorld;
-		mBody = PhysicsFactory.createCircleBody(this.mPhysicsWorld, pX, pY, 150, BodyType.StaticBody, fixtureDef, PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
+		mBody = PhysicsFactory.createCircleBody(this.mPhysicsWorld, pX, pY, 150, BodyType.DynamicBody, fixtureDef, PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
 //		PhysicsFactory.createCircleBody(this.mPhysicsWorld, this, BodyType.StaticBody, fixtureDef, PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(this, mBody, true, true));
-		// TODO Auto-generated constructor stub
+		mBody.setUserData("tower");
+	
 	}
 	
 
