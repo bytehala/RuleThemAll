@@ -57,10 +57,15 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 
 	private static final int CAMERA_WIDTH = 800;
 	private static final int CAMERA_HEIGHT = 480;
+	
+	private static final short CRITTER_CATMASK = 0x0001;
+	private static final short TOWER_CATMASK = 0x0002;
+	private static final short TOWER_GROUP = 0x0002;
+	private static final short CRITTER_GROUP = 0x0001;
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
-	private static final FixtureDef FIXTURE_DEF_TOWER = PhysicsFactory.createFixtureDef(1, 0f, 0f, true, (short)2, (short)1, (short)4);
-	private static final FixtureDef FIXTURE_DEF_CRITTER = PhysicsFactory.createFixtureDef(1, 0f, 0f, true, (short)1, (short)2, (short)4);
+	private static final FixtureDef FIXTURE_DEF_TOWER = PhysicsFactory.createFixtureDef(1, 0f, 0f, true, TOWER_CATMASK, CRITTER_CATMASK, TOWER_GROUP);
+	private static final FixtureDef FIXTURE_DEF_CRITTER = PhysicsFactory.createFixtureDef(1, 0f, 0f, false, CRITTER_CATMASK, TOWER_CATMASK, CRITTER_GROUP);
 	
 	
 	
@@ -132,10 +137,12 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 				// TODO Auto-generated method stub
             	Fixture f1 = contact.getFixtureA();
             	Fixture f2 = contact.getFixtureB();
-            	if(f1!= null && f2!=null) // NULL POINTER EXCEPTION
+            	if(f1.isSensor() ^ f2.isSensor())
+            		Log.e("TEST", "TEST: " + f1.getBody().getUserData() + " " + f2.getBody().getUserData());
+            	if(f1!= null && f2!=null && f1.getUserData()!= null && f2.getUserData() != null) // NULL POINTER EXCEPTION
             	if(f1.getUserData().equals("tower") && f2.getUserData().equals("critter"))
             	{
-            		
+            		Log.d("LEM", "test");
             	}
 				
 			}
@@ -150,7 +157,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			@Override
 			public void preSolve(Contact contact, Manifold oldManifold)
 			{
-				Log.d("LEM!", "" + contact.getFixtureA().getUserData() + " " + contact.getFixtureB().getUserData());
+//				Log.d("LEM!", "" + contact.getFixtureA().getUserData() + " " + contact.getFixtureB().getUserData());
 			}
 
 			@Override
@@ -166,14 +173,14 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		final Rectangle roof = new Rectangle(0, 0, CAMERA_WIDTH, 2, vertexBufferObjectManager);
 		final Rectangle left = new Rectangle(0, 0, 2, CAMERA_HEIGHT, vertexBufferObjectManager);
 		final Rectangle right = new Rectangle(CAMERA_WIDTH - 2, 0, 2, CAMERA_HEIGHT, vertexBufferObjectManager);
-		final Rectangle shelf = new Rectangle(300, 200, 100, 2, vertexBufferObjectManager);
+		
 		
 		final FixtureDef wallFixtureDef = PhysicsFactory.createFixtureDef(0, 0.5f, 0.5f);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, ground, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, roof, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, left, BodyType.StaticBody, wallFixtureDef);
 		PhysicsFactory.createBoxBody(this.mPhysicsWorld, right, BodyType.StaticBody, wallFixtureDef);
-		PhysicsFactory.createBoxBody(this.mPhysicsWorld, shelf, BodyType.StaticBody, wallFixtureDef);
+		
 
 		this.mScene.attachChild(ground);
 		this.mScene.attachChild(roof);
