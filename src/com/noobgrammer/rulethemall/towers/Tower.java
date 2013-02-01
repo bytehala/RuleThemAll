@@ -26,7 +26,7 @@ public class Tower extends AnimatedSprite
 			)
 	{
 		super(pX, pY, pTiledTextureRegion, pVertexBufferObjectManager);
-		animate(200);
+		
 		mPhysicsWorld = physicsWorld;
 		mBody = PhysicsFactory.createCircleBody(this.mPhysicsWorld, pX, pY, 150, BodyType.KinematicBody, fixtureDef, PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT);
 		mBody.setUserData(this);

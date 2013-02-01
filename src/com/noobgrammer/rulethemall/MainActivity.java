@@ -68,9 +68,6 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private static final FixtureDef FIXTURE_DEF_CRITTER = PhysicsFactory.createFixtureDef(1, 0f, 0f, false, CRITTER_CATMASK, TOWER_CATMASK, CRITTER_GROUP);
 	
 	
-	
-	
-	
 	private Critter face_;
 
 	// ===========================================================
@@ -138,20 +135,30 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             	Fixture f1 = contact.getFixtureA();
             	Fixture f2 = contact.getFixtureB();
             	if(f1.isSensor() ^ f2.isSensor())
-            		Log.e("TEST", "TEST: " + f1.getBody().getUserData() + " " + f2.getBody().getUserData());
-            	if(f1!= null && f2!=null && f1.getUserData()!= null && f2.getUserData() != null) // NULL POINTER EXCEPTION
-            	if(f1.getUserData().equals("tower") && f2.getUserData().equals("critter"))
             	{
-            		Log.d("LEM", "test");
+            		if(f2.isSensor())
+            		{
+            			Tower tower = (Tower) f2.getBody().getUserData();
+            			tower.animate(200);
+            		}
             	}
+            	
 				
 			}
 
 			@Override
 			public void endContact(Contact contact)
 			{
-				// TODO Auto-generated method stub
-				
+				Fixture f1 = contact.getFixtureA();
+            	Fixture f2 = contact.getFixtureB();
+            	if(f1.isSensor() ^ f2.isSensor())
+            	{
+            		if(f2.isSensor())
+            		{
+            			Tower tower = (Tower) f2.getBody().getUserData();
+            			tower.stopAnimation(0);
+            		}
+            	}
 			}
 
 			@Override
