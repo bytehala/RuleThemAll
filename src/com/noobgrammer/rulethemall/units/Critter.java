@@ -1,4 +1,4 @@
-package com.noobgrammer.rulethemall.critters;
+package com.noobgrammer.rulethemall.units;
 
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;

@@ -27,7 +27,6 @@ import org.andengine.util.debug.Debug;
 import org.andengine.util.modifier.ease.EaseLinear;
 
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -37,8 +36,9 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.noobgrammer.rulethemall.critters.Critter;
 import com.noobgrammer.rulethemall.towers.Tower;
+import com.noobgrammer.rulethemall.units.Critter;
+import com.noobgrammer.rulethemall.units.Human;
 
 /**
  * (c) 2010 Nicolas Gramlich
@@ -60,12 +60,15 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	
 	private static final short CRITTER_CATMASK = 0x0001;
 	private static final short TOWER_CATMASK = 0x0002;
-	private static final short TOWER_GROUP = 0x0002;
+	private static final short HUMAN_CATMASK = 0x0004;
 	private static final short CRITTER_GROUP = 0x0001;
+	private static final short TOWER_GROUP = 0x0002;
+	private static final short HUMAN_GROUP = 0x0004;
 
 	private static final FixtureDef FIXTURE_DEF = PhysicsFactory.createFixtureDef(1, 0.5f, 0.5f);
 	private static final FixtureDef FIXTURE_DEF_TOWER = PhysicsFactory.createFixtureDef(1, 0f, 0f, true, TOWER_CATMASK, CRITTER_CATMASK, TOWER_GROUP);
-	private static final FixtureDef FIXTURE_DEF_CRITTER = PhysicsFactory.createFixtureDef(1, 0f, 0f, false, CRITTER_CATMASK, TOWER_CATMASK, CRITTER_GROUP);
+	private static final FixtureDef FIXTURE_DEF_CRITTER = PhysicsFactory.createFixtureDef(1, 0f, 0f, false, CRITTER_CATMASK, (short)(TOWER_CATMASK | HUMAN_CATMASK), CRITTER_GROUP);
+	private static final FixtureDef FIXTURE_DEF_HUMAN = PhysicsFactory.createFixtureDef(1, 0f, 0f, true, HUMAN_CATMASK, CRITTER_CATMASK, HUMAN_GROUP);
 	
 	
 	private Critter face_;
@@ -136,10 +139,27 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             	Fixture f2 = contact.getFixtureB();
             	if(f1.isSensor() ^ f2.isSensor())
             	{
-            		if(f2.isSensor())
+            		Fixture sensor;
+            		Fixture sensed;
+            		if(f1.isSensor())
+            		{
+            			sensor = f1;
+            			sensed = f2;
+            		}
+            		else
+            		{
+            			sensor = f2;
+            			sensed = f1;
+            		}
+            		if(sensor.getBody().getUserData() instanceof Tower)
             		{
             			Tower tower = (Tower) f2.getBody().getUserData();
             			tower.animate(200);
+            		}
+            		else if(sensor.getBody().getUserData() instanceof Human)
+            		{
+            			Human human = (Human) sensor.getBody().getUserData();;
+            			human.acquireTarget((Critter) sensed.getBody().getUserData());
             		}
             	}
             	
@@ -153,10 +173,15 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             	Fixture f2 = contact.getFixtureB();
             	if(f1.isSensor() ^ f2.isSensor())
             	{
-            		if(f2.isSensor())
+            		Fixture sensor = f1.isSensor() ? f1 : f2;
+            		if(sensor.getBody().getUserData() instanceof Tower)
             		{
             			Tower tower = (Tower) f2.getBody().getUserData();
             			tower.stopAnimation(0);
+            		}
+            		else if(sensor.getBody().getUserData() instanceof Human)
+            		{
+            			
             		}
             	}
 			}
@@ -196,6 +221,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		
 
 		this.addFace(0, 0);
+		addHuman();
 
 		this.mScene.registerUpdateHandler(this.mPhysicsWorld);
 		this.mScene.registerUpdateHandler(new IUpdateHandler()
@@ -269,6 +295,12 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	{
 		Tower tower = new Tower(pX, pY, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_TOWER);
 		this.mScene.attachChild(tower);
+	}
+	
+	private void addHuman()
+	{
+		Human human = new Human(10, CAMERA_HEIGHT - 74, this.mTriangleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_HUMAN);
+		this.mScene.attachChild(human);
 	}
 
 	// ===========================================================
