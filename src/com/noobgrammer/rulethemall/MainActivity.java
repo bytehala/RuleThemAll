@@ -11,15 +11,17 @@ import org.andengine.entity.modifier.PathModifier.Path;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
-import org.andengine.entity.scene.background.Background;
+import org.andengine.entity.scene.background.SpriteBackground;
+import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.util.FPSLogger;
-import org.andengine.extension.debugdraw.DebugRenderer;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
 import org.andengine.extension.physics.box2d.PhysicsWorld;
 import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
+import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
+import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
@@ -83,11 +85,14 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	private TiledTextureRegion mCircleFaceTextureRegion;
 	private TiledTextureRegion mTriangleFaceTextureRegion;
 	private TiledTextureRegion mHexagonFaceTextureRegion;
+	private SpriteBackground mBackgroundSprite;
 
 	private Scene mScene;
 
 	private PhysicsWorld mPhysicsWorld;
 	private int mFaceCount = 0;
+	private BitmapTextureAtlas mBuildableBitmapTextureAtlas;
+	private TextureRegion mBgTextureRegion;
 
 	// ===========================================================
 	// Constructors
@@ -113,12 +118,17 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
+		mBuildableBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 800, 480, TextureOptions.BILINEAR);
 		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 64, 128, TextureOptions.BILINEAR);
 		this.mBoxFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "critter_.png", 0, 0, 1, 1); // 64x32
 		this.mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_circle_tiled.png", 0, 32, 2, 1); // 64x32
 		this.mTriangleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_triangle_tiled.png", 0, 64, 2, 1); // 64x32
 		this.mHexagonFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_hexagon_tiled.png", 0, 96, 2, 1); // 64x32
+
+		this.mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBuildableBitmapTextureAtlas, this, "kr_1.png", 0, 0);
 		this.mBitmapTextureAtlas.load();
+		this.mBuildableBitmapTextureAtlas.load(); 
+		
 	}
 
 	@Override
@@ -126,7 +136,9 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 
 		this.mScene = new Scene();
-		this.mScene.setBackground(new Background(0, 0, 0));
+		mBackgroundSprite = new SpriteBackground(new Sprite(0, 0, mBgTextureRegion, this.getVertexBufferObjectManager()));
+		this.mScene.setBackground(mBackgroundSprite);
+		this.mScene.setBackgroundEnabled(true);
 		this.mScene.setOnSceneTouchListener(this);
 
 		this.mPhysicsWorld = new PhysicsWorld(new Vector2(0, SensorManager.GRAVITY_DEATH_STAR_I), false);
@@ -243,7 +255,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 			
 		});
 //TODO DEBUG DRAW DEBUGDRAW - TOGGLE ON OFF  	 		
-	    mScene.attachChild(new DebugRenderer(mPhysicsWorld, getVertexBufferObjectManager()));	
+//	    mScene.attachChild(new DebugRenderer(mPhysicsWorld, getVertexBufferObjectManager()));	
 
 		return this.mScene;
 	}
