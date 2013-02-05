@@ -41,6 +41,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.noobgrammer.rulethemall.towers.Tower;
 import com.noobgrammer.rulethemall.units.Critter;
 import com.noobgrammer.rulethemall.units.Human;
+import com.noobgrammer.rulethemall.units.path.Track;
 
 /**
  * (c) 2010 Nicolas Gramlich
@@ -295,10 +296,8 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		
 		face_ = new Critter(pX, pY, this.mBoxFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_CRITTER);
 		
-		final Path path = new Path(5).to(10, 10).to(10, CAMERA_HEIGHT - 74).to(CAMERA_WIDTH - 58, CAMERA_HEIGHT - 74).to(CAMERA_WIDTH - 58, 10).to(10, 10);
-
-        /* Add the proper animation when a waypoint of the path is passed. */
-        face_.registerEntityModifier(new LoopEntityModifier(new PathModifier(30, path, EaseLinear.getInstance())));
+		        /* Add the proper animation when a waypoint of the path is passed. */
+        face_.setPath(Track.LevelOnePath());
         
 		this.mScene.attachChild(face_);
 	}
@@ -311,7 +310,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	
 	private void addHuman()
 	{
-		Human human = new Human(10, CAMERA_HEIGHT - 74, this.mTriangleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_HUMAN);
+		Human human = new Human(26, CAMERA_HEIGHT - 74, this.mTriangleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_HUMAN);
 		this.mScene.attachChild(human);
 	}
 
@@ -319,3 +318,6 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	// Inner and Anonymous Classes
 	// ===========================================================
 }
+
+
+

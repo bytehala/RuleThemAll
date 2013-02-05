@@ -38,7 +38,9 @@ public class Human extends AnimatedSprite{
 	
 	public void acquireTarget(Critter target)
 	{
-		Log.e("LEM", "target acquired: " + target.getX() + ", " + target.getY());
+		target.onAttacked();
+		target.onMoveOn();
+		
 	}
 
 }

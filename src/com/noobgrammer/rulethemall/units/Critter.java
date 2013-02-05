@@ -1,5 +1,6 @@
 package com.noobgrammer.rulethemall.units;
 
+import org.andengine.entity.modifier.IEntityModifier;
 import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.extension.physics.box2d.PhysicsConnector;
 import org.andengine.extension.physics.box2d.PhysicsFactory;
@@ -9,13 +10,14 @@ import org.andengine.opengl.texture.region.ITiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 
 public class Critter extends AnimatedSprite
 {
 	private PhysicsWorld mPhysicsWorld;
 	private Body mBody;
+	private IEntityModifier mTrack;
 
 	public Critter(float pX,
 			float pY,
@@ -39,6 +41,22 @@ public class Critter extends AnimatedSprite
 	{
 		super.setPosition(x, y);
 		mBody.setTransform((x + getWidth()/2)/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, (y + getHeight()/2)/PhysicsConstants.PIXEL_TO_METER_RATIO_DEFAULT, getRotation());
+	}
+	
+	public void setPath(IEntityModifier track)
+	{
+		mTrack = track;
+		registerEntityModifier(mTrack);
+	}
+	
+	public void onAttacked()
+	{
+		unregisterEntityModifier(mTrack);
+	}
+	
+	public void onMoveOn()
+	{
+		registerEntityModifier(mTrack);
 	}
 	
 	public void update()
