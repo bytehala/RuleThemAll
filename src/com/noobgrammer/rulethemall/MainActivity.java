@@ -81,6 +81,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	// ===========================================================
 
 	private BitmapTextureAtlas mBitmapTextureAtlas;
+	private BitmapTextureAtlas mBackgroundBitmapTextureAtlas;
 
 	private TiledTextureRegion mBoxFaceTextureRegion;
 	private TiledTextureRegion mCircleFaceTextureRegion;
@@ -92,7 +93,6 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 
 	private PhysicsWorld mPhysicsWorld;
 	private int mFaceCount = 0;
-	private BitmapTextureAtlas mBuildableBitmapTextureAtlas;
 	private TextureRegion mBgTextureRegion;
 
 	// ===========================================================
@@ -119,16 +119,16 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
-		mBuildableBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 800, 480, TextureOptions.BILINEAR);
-		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 64, 128, TextureOptions.BILINEAR);
-		this.mBoxFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "critter_.png", 0, 0, 1, 1); // 64x32
-		this.mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_circle_tiled.png", 0, 32, 2, 1); // 64x32
-		this.mTriangleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_triangle_tiled.png", 0, 64, 2, 1); // 64x32
-		this.mHexagonFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_hexagon_tiled.png", 0, 96, 2, 1); // 64x32
+		mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 64, 128, TextureOptions.BILINEAR);
+		mBoxFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "critter_.png", 0, 0, 1, 1); // 64x32
+		mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_circle_tiled.png", 0, 32, 2, 1); // 64x32
+		mTriangleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_triangle_tiled.png", 0, 64, 2, 1); // 64x32
+		mHexagonFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_hexagon_tiled.png", 0, 96, 2, 1); // 64x32
+		mBitmapTextureAtlas.load();
 
-		this.mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBuildableBitmapTextureAtlas, this, "kr_1.png", 0, 0);
-		this.mBitmapTextureAtlas.load();
-		this.mBuildableBitmapTextureAtlas.load(); 
+		mBackgroundBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 800, 480, TextureOptions.BILINEAR);
+		mBgTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(mBackgroundBitmapTextureAtlas, this, "kr_1.png", 0, 0);
+		mBackgroundBitmapTextureAtlas.load(); 
 		
 	}
 
@@ -235,6 +235,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 
 		this.addFace(0, 0);
 		addHuman();
+		this.addTower(200, 100);
 
 		this.mScene.registerUpdateHandler(this.mPhysicsWorld);
 		this.mScene.registerUpdateHandler(new IUpdateHandler()
@@ -266,7 +267,7 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 		if(this.mPhysicsWorld != null) {
 			if(pSceneTouchEvent.isActionDown()) {
 				{
-					this.addTower(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
+//					this.addTower(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
 				}
 				return true;
 			}
