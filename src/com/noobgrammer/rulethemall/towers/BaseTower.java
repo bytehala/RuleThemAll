@@ -13,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-public class BaseTower extends AnimatedSprite
+public class BaseTower extends Tower
 {
 	private PhysicsWorld mPhysicsWorld;
 	private Body mBody;
@@ -35,11 +35,11 @@ public class BaseTower extends AnimatedSprite
 		mPhysicsWorld.registerPhysicsConnector(new PhysicsConnector(this, mBody, true, true));
 	
 	}
-	
+
 	@Override
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY)
-	{
-		return true;
+	public void showMenu() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 
