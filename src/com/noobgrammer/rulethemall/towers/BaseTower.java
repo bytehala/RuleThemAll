@@ -13,12 +13,12 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 
-public class Tower extends AnimatedSprite
+public class BaseTower extends AnimatedSprite
 {
 	private PhysicsWorld mPhysicsWorld;
 	private Body mBody;
 
-	public Tower(float pX,
+	public BaseTower(float pX,
 			float pY,
 			ITiledTextureRegion pTiledTextureRegion,
 			VertexBufferObjectManager pVertexBufferObjectManager,

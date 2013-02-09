@@ -5,9 +5,6 @@ import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.FillResolutionPolicy;
-import org.andengine.entity.modifier.LoopEntityModifier;
-import org.andengine.entity.modifier.PathModifier;
-import org.andengine.entity.modifier.PathModifier.Path;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -20,13 +17,11 @@ import org.andengine.input.touch.TouchEvent;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
-import org.andengine.opengl.texture.atlas.bitmap.BuildableBitmapTextureAtlas;
 import org.andengine.opengl.texture.region.TextureRegion;
 import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.debug.Debug;
-import org.andengine.util.modifier.ease.EaseLinear;
 
 import android.hardware.SensorManager;
 
@@ -38,7 +33,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.noobgrammer.rulethemall.towers.Tower;
+import com.noobgrammer.rulethemall.towers.BaseTower;
 import com.noobgrammer.rulethemall.units.Critter;
 import com.noobgrammer.rulethemall.units.Human;
 import com.noobgrammer.rulethemall.units.path.Track;
@@ -53,7 +48,7 @@ import com.noobgrammer.rulethemall.units.path.Track;
 
 // RealMayo: THIS PROJECT IS SIMPLY THE CODE TAKEN FROM PhysicsExample.java FROM THE AndEngineExamples
 
-public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener {
+public class RuleThemAllActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -164,9 +159,9 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             			sensor = f2;
             			sensed = f1;
             		}
-            		if(sensor.getBody().getUserData() instanceof Tower)
+            		if(sensor.getBody().getUserData() instanceof BaseTower)
             		{
-            			Tower tower = (Tower) f2.getBody().getUserData();
+            			BaseTower tower = (BaseTower) f2.getBody().getUserData();
             			tower.animate(200);
             		}
             		else if(sensor.getBody().getUserData() instanceof Human)
@@ -187,9 +182,9 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
             	if(f1.isSensor() ^ f2.isSensor())
             	{
             		Fixture sensor = f1.isSensor() ? f1 : f2;
-            		if(sensor.getBody().getUserData() instanceof Tower)
+            		if(sensor.getBody().getUserData() instanceof BaseTower)
             		{
-            			Tower tower = (Tower) f2.getBody().getUserData();
+            			BaseTower tower = (BaseTower) f2.getBody().getUserData();
             			tower.stopAnimation(0);
             		}
             		else if(sensor.getBody().getUserData() instanceof Human)
@@ -305,8 +300,9 @@ public class MainActivity extends SimpleBaseGameActivity implements IOnSceneTouc
 	
 	private void addTower(final float pX, final float pY)
 	{
-		Tower tower = new Tower(pX, pY, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_TOWER);
+		BaseTower tower = new BaseTower(pX, pY, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_TOWER);
 		this.mScene.attachChild(tower);
+		mScene.registerTouchArea(tower);
 	}
 	
 	private void addHuman()
