@@ -34,6 +34,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.noobgrammer.rulethemall.towers.BaseTower;
+import com.noobgrammer.rulethemall.towers.TowerTypes;
 import com.noobgrammer.rulethemall.units.Critter;
 import com.noobgrammer.rulethemall.units.Human;
 import com.noobgrammer.rulethemall.units.path.Track;
@@ -82,13 +83,20 @@ public class RuleThemAllActivity extends SimpleBaseGameActivity implements IOnSc
 	private TiledTextureRegion mCircleFaceTextureRegion;
 	private TiledTextureRegion mTriangleFaceTextureRegion;
 	private TiledTextureRegion mHexagonFaceTextureRegion;
-	private SpriteBackground mBackgroundSprite;
+	
+	// Background
+	private TextureRegion mBgTextureRegion;
+	
+	// Tower "Portraits" in the Menu
+	private TextureRegion mBarracksTextureRegion;
+	private TextureRegion mArchersTextureRegion;
+	private TextureRegion mMagiTextureRegion;
+	private TextureRegion mArtilleryTextureRegion;
 
 	private Scene mScene;
 
 	private PhysicsWorld mPhysicsWorld;
 	private int mFaceCount = 0;
-	private TextureRegion mBgTextureRegion;
 
 	// ===========================================================
 	// Constructors
@@ -114,11 +122,16 @@ public class RuleThemAllActivity extends SimpleBaseGameActivity implements IOnSc
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
 
-		mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 64, 128, TextureOptions.BILINEAR);
+		mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 512, 512, TextureOptions.BILINEAR);
 		mBoxFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "critter_.png", 0, 0, 1, 1); // 64x32
 		mCircleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_circle_tiled.png", 0, 32, 2, 1); // 64x32
 		mTriangleFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_triangle_tiled.png", 0, 64, 2, 1); // 64x32
 		mHexagonFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(this.mBitmapTextureAtlas, this, "face_hexagon_tiled.png", 0, 96, 2, 1); // 64x32
+		
+		mBarracksTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "barracks_portrait.png", 64, 0); // 64x64
+		mMagiTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "magi_portrait.png", 64, 64); // 64x64
+		mArchersTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "archers_portrait.png", 64, 128); // 64x64
+		mArtilleryTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "artillery_portrait.png", 64, 192); //64x64
 		mBitmapTextureAtlas.load();
 
 		mBackgroundBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(), 800, 480, TextureOptions.BILINEAR);
@@ -132,8 +145,8 @@ public class RuleThemAllActivity extends SimpleBaseGameActivity implements IOnSc
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 
 		this.mScene = new Scene();
-		mBackgroundSprite = new SpriteBackground(new Sprite(0, 0, mBgTextureRegion, this.getVertexBufferObjectManager()));
-		this.mScene.setBackground(mBackgroundSprite);
+		SpriteBackground backgroundSprite = new SpriteBackground(new Sprite(0, 0, mBgTextureRegion, this.getVertexBufferObjectManager()));
+		this.mScene.setBackground(backgroundSprite);
 		this.mScene.setBackgroundEnabled(true);
 		this.mScene.setOnSceneTouchListener(this);
 
@@ -301,6 +314,9 @@ public class RuleThemAllActivity extends SimpleBaseGameActivity implements IOnSc
 	private void addTower(final float pX, final float pY)
 	{
 		BaseTower tower = new BaseTower(pX, pY, this.mCircleFaceTextureRegion, this.getVertexBufferObjectManager(), this.mPhysicsWorld, FIXTURE_DEF_TOWER);
+		tower.setUpgradeTowerTypes(TowerTypes.BARRACKS_1, TowerTypes.ARCHERS_1, TowerTypes.MAGE_1, TowerTypes.ARTILLERY_1);
+		tower.setPortraitTextureRegions(mBarracksTextureRegion, mArchersTextureRegion, mMagiTextureRegion, mArtilleryTextureRegion);
+		tower.setScene(mScene);
 		this.mScene.attachChild(tower);
 		mScene.registerTouchArea(tower);
 	}

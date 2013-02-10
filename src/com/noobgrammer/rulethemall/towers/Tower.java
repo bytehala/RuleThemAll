@@ -7,6 +7,8 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 
 public abstract class Tower extends AnimatedSprite {
 
+	protected boolean mIsMenuShown = false;
+
 	public Tower(float pX, float pY,
 			ITiledTextureRegion pTiledTextureRegion,
 			VertexBufferObjectManager pVertexBufferObjectManager) {
@@ -14,12 +16,20 @@ public abstract class Tower extends AnimatedSprite {
 	}
 	
 	public abstract void showMenu();
+	public abstract void hideMenu();
 	
 	@Override
 	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY)
 	{
-		showMenu();
+		if(pSceneTouchEvent.getAction() == TouchEvent.ACTION_UP)
+		{
+			if(mIsMenuShown)
+				hideMenu();
+			else
+				showMenu();
 		return true;
+		}
+		return false;
 	}
 
 }

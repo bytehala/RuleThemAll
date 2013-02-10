@@ -1,0 +1,28 @@
+package com.noobgrammer.rulethemall.towers;
+
+public enum TowerTypes {
+	
+	BASE_TOWER,
+	BARRACKS_1,
+	BARRACKS_2,
+	BARRACKS_3,
+	TEMPLARS,
+	BARBARIANS,
+	ARCHERS_1,
+	ARCHERS_2,
+	ARCHERS_3,
+	RANGERS,
+	MUSKETEERS,
+	MAGE_1,
+	MAGE_2,
+	MAGE_3,
+	WIZARD,
+	SORCERER,
+	ARTILLERY_1,
+	ARTILLERY_2,
+	ARTILLERY_3,
+	BIG_BERTHA,
+	TESLA
+	
+
+}
